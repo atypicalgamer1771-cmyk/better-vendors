@@ -160,11 +160,23 @@ class BetterVendors(SDKMod):
             if caller.ShopType == 0: 
                 unrealsdk.Log("[BetterVendors] Applying weapon vendor patches...") 
                 self._patch_weapon_vendor() 
-                self._patch_iotd() 
+                self._patch_iotd()
+                # Force vendor to rebuild inventory
+                try:
+                    caller.GenerateShopInventory()
+                    unrealsdk.Log("[BetterVendors] Weapon vendor inventory regenerated")
+                except Exception as e:
+                    unrealsdk.Log(f"[BetterVendors] Failed to regenerate weapon vendor inventory: {e}")
             elif caller.ShopType == 1: 
                 unrealsdk.Log("[BetterVendors] Applying health vendor patches...") 
                 self._patch_health_vendor() 
-                self._patch_iotd() 
+                self._patch_iotd()
+                # Force vendor to rebuild inventory
+                try:
+                    caller.GenerateShopInventory()
+                    unrealsdk.Log("[BetterVendors] Health vendor inventory regenerated")
+                except Exception as e:
+                    unrealsdk.Log(f"[BetterVendors] Failed to regenerate health vendor inventory: {e}")
             else: 
                 unrealsdk.Log(f"[BetterVendors] Unknown ShopType={caller.ShopType}, skipping") 
         else:
