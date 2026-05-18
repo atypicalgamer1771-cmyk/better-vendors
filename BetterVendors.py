@@ -161,22 +161,10 @@ class BetterVendors(SDKMod):
                 unrealsdk.Log("[BetterVendors] Applying weapon vendor patches...") 
                 self._patch_weapon_vendor() 
                 self._patch_iotd()
-                # Force vendor to rebuild inventory
-                try:
-                    caller.GenerateShopInventory()
-                    unrealsdk.Log("[BetterVendors] Weapon vendor inventory regenerated")
-                except Exception as e:
-                    unrealsdk.Log(f"[BetterVendors] Failed to regenerate weapon vendor inventory: {e}")
             elif caller.ShopType == 1: 
                 unrealsdk.Log("[BetterVendors] Applying health vendor patches...") 
                 self._patch_health_vendor() 
                 self._patch_iotd()
-                # Force vendor to rebuild inventory
-                try:
-                    caller.GenerateShopInventory()
-                    unrealsdk.Log("[BetterVendors] Health vendor inventory regenerated")
-                except Exception as e:
-                    unrealsdk.Log(f"[BetterVendors] Failed to regenerate health vendor inventory: {e}")
             else: 
                 unrealsdk.Log(f"[BetterVendors] Unknown ShopType={caller.ShopType}, skipping") 
         else:
@@ -187,6 +175,23 @@ class BetterVendors(SDKMod):
         self._health_patched = False 
         self._iotd_patched = False 
         unrealsdk.Log("[BetterVendors] Options changed, patches reset") 
+
+    @Hook("WillowGame.WillowVendingMachine.InitializeItemLists")
+    def InitializeItemLists(
+        self,
+        caller: unrealsdk.UObject,
+        function: unrealsdk.UFunction,
+        params: unrealsdk.FStruct,
+    ) -> bool:
+        # Patch BEFORE the vendor generates items
+        self._weapons_patched = False
+        self._health_patched = False
+        self._iotd_patched = False
+        
+        unrealsdk.Log(f"[BetterVendors] InitializeItemLists - ShopType={caller.ShopType}, Level={self._get_level(caller)}")
+        self._apply_patches(caller)
+        
+        return True
 
     @Hook("WillowGame.WillowInteractiveObject.InitializeFromDefinition") 
     def InitializeFromDefinition( 
