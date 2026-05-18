@@ -222,19 +222,7 @@ class BetterVendors(SDKMod):
         self._health_patched = False 
         self._iotd_patched = False
         
-        unrealsdk.Log("[BetterVendors] Map loaded, patches reset") 
-        
-        # Attempt to patch all vendors in the map
-        try:
-            for obj in unrealsdk.FindAll("WillowVendingMachine", ""):
-                if obj and hasattr(obj, 'ShopType'):
-                    unrealsdk.Log(f"[BetterVendors] Found vendor on map load: ShopType={obj.ShopType}")
-                    self._weapons_patched = False
-                    self._health_patched = False
-                    self._iotd_patched = False
-                    self._apply_patches(obj)
-        except Exception as e:
-            unrealsdk.Log(f"[BetterVendors] Error patching vendors on map load: {e}")
+        unrealsdk.Log("[BetterVendors] Map loaded, patches will be applied to vendors as they initialize") 
         
         return True 
 
